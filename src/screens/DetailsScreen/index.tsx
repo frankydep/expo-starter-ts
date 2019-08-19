@@ -21,7 +21,7 @@ interface DetailsScreenProps {
 export const DetailsScreen = ({
   navigation,
 }: DetailsScreenProps): JSX.Element => {
-  const photo = navigation.getParam('photo');
+  const photo: Photo = navigation.getParam('photo');
 
   return (
     <View>
