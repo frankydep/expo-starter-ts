@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, AsyncStorage } from 'react-native';
+import { Button } from 'react-native';
 import {
   NavigationScreenProp,
   NavigationState,
@@ -7,23 +7,21 @@ import {
 } from 'react-navigation';
 
 import { Routes } from '../../navigation';
+import { useSignInHandler } from '../../hooks/useAuth';
 
 interface SignInScreenProps {
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-export class SignInScreen extends React.Component<SignInScreenProps> {
-  signInAsync = async () => {
-    const { navigation } = this.props;
-    await AsyncStorage.setItem('token', 'abc');
-    navigation.navigate(Routes.App);
-  };
+export const SignInScreen = ({
+  navigation,
+}: SignInScreenProps): JSX.Element => {
+  const [signInAsync] = useSignInHandler();
 
-  render() {
-    return (
-      <>
-        <Button title="Sign in" onPress={this.signInAsync} />
-      </>
-    );
-  }
-}
+  return (
+    <Button
+      title="Sign in"
+      onPress={() => signInAsync(() => navigation.navigate(Routes.App))}
+    />
+  );
+};

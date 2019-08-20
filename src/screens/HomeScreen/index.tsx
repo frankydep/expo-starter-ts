@@ -1,17 +1,15 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, FlatList, TouchableOpacity } from 'react-native';
 import {
   NavigationScreenProp,
   NavigationState,
   NavigationParams,
-  NavigationScreenComponent,
 } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import { Routes } from '../../navigation';
 import { StoreState } from '../../reducers';
-import { Photo, fetchPhotos } from '../../actions/photos';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { fetchPhotos, Photo } from '../../actions/photos';
 
 interface HomeScreenProps {
   navigation: NavigationScreenProp<NavigationState, NavigationParams>;
@@ -19,51 +17,35 @@ interface HomeScreenProps {
   fetchPhotos: Function;
 }
 
-class _HomeScreen extends React.Component<HomeScreenProps> {
-  componentDidMount() {
-    const { fetchPhotos } = this.props;
+const _HomeScreen = ({
+  navigation,
+  photos,
+  fetchPhotos,
+}: HomeScreenProps): JSX.Element => {
+  useEffect(() => {
     fetchPhotos();
-  }
+  });
+  return (
+    <>
+      <FlatList
+        data={photos}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate(Routes.Details, { photo: item })}
+          >
+            <Text>{item.title}</Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item.title}
+      />
+    </>
+  );
+};
 
-  onItemPress = (photo: Photo): void => {
-    const { navigation } = this.props;
-    navigation.navigate(Routes.Details, { photo });
-  };
-
-  keyExtractor = (item: Photo): string => `${item.id}`;
-
-  renderItem = ({ item }: { item: Photo }): JSX.Element => {
-    return (
-      <TouchableOpacity onPress={() => this.onItemPress(item)}>
-        <View>
-          <Text>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  render() {
-    const { photos } = this.props;
-    return (
-      <>
-        {photos && photos.length ? (
-          <React.Fragment>
-            <FlatList
-              data={photos}
-              keyExtractor={this.keyExtractor}
-              renderItem={this.renderItem}
-            />
-          </React.Fragment>
-        ) : null}
-      </>
-    );
-  }
-}
-
-const mapStateToProps = ({ photos }: StoreState): { photos: Photo[] } => ({
+const mapStateToProps = ({ photos }: StoreState) => ({
   photos,
 });
-// HomeScreen type any or NavigationScreenComponent or else?
+
 export const HomeScreen = connect(
   mapStateToProps,
   { fetchPhotos },
