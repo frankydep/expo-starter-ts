@@ -1,3 +1,9 @@
+import {
+  NavigationActions,
+  NavigationParams,
+  NavigationContainerComponent,
+} from 'react-navigation';
+
 /**
  * Navigation routes
  */
@@ -10,3 +16,18 @@ export enum Routes {
   Details = 'Details',
   Settings = 'Settings',
 }
+
+let navigator: NavigationContainerComponent;
+
+export const setNavigator = (nav: NavigationContainerComponent) => {
+  navigator = nav;
+};
+
+export const navigate = (routeName: Routes, params?: NavigationParams) => {
+  navigator.dispatch(
+    NavigationActions.navigate({
+      routeName,
+      params,
+    }),
+  );
+};

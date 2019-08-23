@@ -1,29 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { View, ActivityIndicator } from 'react-native';
+import { NavigationScreenComponent } from 'react-navigation';
 
-import { Routes } from '../../navigation';
 import { styles } from './styles';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
-import { useCheckAuthHandler } from '../../hooks/useAuth';
+import { Context as AuthContext } from '../../context/AuthContext';
 
-interface AuthLoadingScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
-
-export const AuthLoadingScreen = ({
-  navigation,
-}: AuthLoadingScreenProps): JSX.Element => {
-  // checks for token
-  const [checkAuthAsync] = useCheckAuthHandler();
+export const AuthLoadingScreen: NavigationScreenComponent = (): JSX.Element => {
+  const { checkSignin } = useContext(AuthContext);
 
   useEffect(() => {
-    checkAuthAsync((token: string) =>
-      navigation.navigate(token ? Routes.App : Routes.Auth),
-    );
+    checkSignin();
   }, []);
 
   return (

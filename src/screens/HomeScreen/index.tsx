@@ -1,37 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Text, FlatList, TouchableOpacity } from 'react-native';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
-import { connect } from 'react-redux';
+import { NavigationScreenComponent, NavigationEvents } from 'react-navigation';
 
 import { Routes } from '../../navigation';
-import { StoreState } from '../../reducers';
-import { fetchPhotos, Photo } from '../../actions/photos';
 
-interface HomeScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-  photos: Photo[];
-  fetchPhotos: Function;
-}
+import { Context as AlbumContext, Album } from '../../context/AlbumsContext';
 
-const _HomeScreen = ({
+export const HomeScreen: NavigationScreenComponent = ({
   navigation,
-  photos,
-  fetchPhotos,
-}: HomeScreenProps): JSX.Element => {
-  useEffect(() => {
-    fetchPhotos();
-  });
+}): JSX.Element => {
+  const {
+    state,
+    fetchAlbums,
+  }: { state: Album[]; fetchAlbums: () => {} } = useContext(AlbumContext);
+
   return (
     <>
+      <NavigationEvents onWillFocus={fetchAlbums} />
       <FlatList
-        data={photos}
+        data={state}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate(Routes.Details, { photo: item })}
+            onPress={() => navigation.navigate(Routes.Details, { album: item })}
           >
             <Text>{item.title}</Text>
           </TouchableOpacity>
@@ -41,12 +31,3 @@ const _HomeScreen = ({
     </>
   );
 };
-
-const mapStateToProps = ({ photos }: StoreState) => ({
-  photos,
-});
-
-export const HomeScreen = connect(
-  mapStateToProps,
-  { fetchPhotos },
-)(_HomeScreen);

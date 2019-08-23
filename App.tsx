@@ -1,13 +1,20 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 
 import { AppNavigator } from './src/navigation/AppNavigator';
-import { store } from './src/store';
+import { Provider as AuthProvider } from './src/context/AuthContext';
+import { Provider as AlbumsProvider } from './src/context/AlbumsContext';
+import { setNavigator } from './src/navigation';
 
 export default function App(): JSX.Element {
   return (
-    <Provider store={store}>
-      <AppNavigator />
-    </Provider>
+    <AlbumsProvider>
+      <AuthProvider>
+        <AppNavigator
+          ref={navigator => {
+            setNavigator(navigator);
+          }}
+        />
+      </AuthProvider>
+    </AlbumsProvider>
   );
 }

@@ -1,26 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button } from 'react-native';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
+import { NavigationScreenComponent } from 'react-navigation';
 
-import { Routes } from '../../navigation';
-import { useSignOutHandler } from '../../hooks/useAuth';
+import { Context as AuthContext } from '../../context/AuthContext';
 
-interface SettingsScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
-
-export const SettingsScreen = ({
-  navigation,
-}: SettingsScreenProps): JSX.Element => {
-  const [signOutAsync] = useSignOutHandler();
-  return (
-    <Button
-      title="Sign out"
-      onPress={() => signOutAsync(() => navigation.navigate(Routes.Auth))}
-    />
-  );
+export const SettingsScreen: NavigationScreenComponent = (): JSX.Element => {
+  const { signout } = useContext(AuthContext);
+  return <Button title="Sign out" onPress={signout} />;
 };
