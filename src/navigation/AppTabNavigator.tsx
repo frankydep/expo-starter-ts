@@ -26,7 +26,6 @@ const HomeStackNavigator = createStackNavigator(
 const SettingsStackNavigator = createStackNavigator(
   {
     [Routes.Settings]: SettingsScreen,
-    // extra settings screens here, like:
     // [Routes.ThemeSet]: ThemeSettingsScreen,
     // [Routes.LanguageSet]: LanguageSettingsScreen,
   },

@@ -1,29 +1,20 @@
-import React from 'react';
-import { Button, AsyncStorage } from 'react-native';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
+import React, { useContext } from 'react';
+import { Button, View } from 'react-native';
+import { NavigationScreenComponent } from 'react-navigation';
 
-import { Routes } from '../../navigation';
+import { styles } from './styles';
+import { Context as AuthContext } from '../../context/AuthContext';
 
-interface SignInScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
+export const SignInScreen: NavigationScreenComponent = (): JSX.Element => {
+  const { signin } = useContext(AuthContext);
 
-export class SignInScreen extends React.Component<SignInScreenProps> {
-  signInAsync = async () => {
-    const { navigation } = this.props;
-    await AsyncStorage.setItem('token', 'abc');
-    navigation.navigate(Routes.App);
-  };
+  return (
+    <View style={styles.container}>
+      <Button title="Sign in" onPress={signin} />
+    </View>
+  );
+};
 
-  render() {
-    return (
-      <>
-        <Button title="Sign in" onPress={this.signInAsync} />
-      </>
-    );
-  }
-}
+SignInScreen.navigationOptions = {
+  header: null,
+};

@@ -1,70 +1,33 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-  NavigationScreenComponent,
-} from 'react-navigation';
-import { connect } from 'react-redux';
+import React, { useContext } from 'react';
+import { Text, FlatList, TouchableOpacity } from 'react-native';
+import { NavigationScreenComponent, NavigationEvents } from 'react-navigation';
 
 import { Routes } from '../../navigation';
-import { StoreState } from '../../reducers';
-import { Photo, fetchPhotos } from '../../actions/photos';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-interface HomeScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-  photos: Photo[];
-  fetchPhotos: Function;
-}
+import { Context as AlbumContext, Album } from '../../context/AlbumsContext';
 
-class _HomeScreen extends React.Component<HomeScreenProps> {
-  componentDidMount() {
-    const { fetchPhotos } = this.props;
-    fetchPhotos();
-  }
+export const HomeScreen: NavigationScreenComponent = ({
+  navigation,
+}): JSX.Element => {
+  const {
+    state,
+    fetchAlbums,
+  }: { state: Album[]; fetchAlbums: () => {} } = useContext(AlbumContext);
 
-  onItemPress = (photo: Photo): void => {
-    const { navigation } = this.props;
-    navigation.navigate(Routes.Details, { photo });
-  };
-
-  keyExtractor = (item: Photo): string => `${item.id}`;
-
-  renderItem = ({ item }: { item: Photo }): JSX.Element => {
-    return (
-      <TouchableOpacity onPress={() => this.onItemPress(item)}>
-        <View>
-          <Text>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  render() {
-    const { photos } = this.props;
-    return (
-      <>
-        {photos && photos.length ? (
-          <React.Fragment>
-            <FlatList
-              data={photos}
-              keyExtractor={this.keyExtractor}
-              renderItem={this.renderItem}
-            />
-          </React.Fragment>
-        ) : null}
-      </>
-    );
-  }
-}
-
-const mapStateToProps = ({ photos }: StoreState): { photos: Photo[] } => ({
-  photos,
-});
-// HomeScreen type any or NavigationScreenComponent or else?
-export const HomeScreen = connect(
-  mapStateToProps,
-  { fetchPhotos },
-)(_HomeScreen);
+  return (
+    <>
+      <NavigationEvents onWillFocus={fetchAlbums} />
+      <FlatList
+        data={state}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate(Routes.Details, { album: item })}
+          >
+            <Text>{item.title}</Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item.title}
+      />
+    </>
+  );
+};

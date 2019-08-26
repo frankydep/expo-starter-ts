@@ -1,27 +1,10 @@
-import React from 'react';
-import { Button, AsyncStorage } from 'react-native';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
-import { Routes } from '../../navigation';
+import React, { useContext } from 'react';
+import { Button } from 'react-native';
+import { NavigationScreenComponent } from 'react-navigation';
 
-interface SettingsScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
+import { Context as AuthContext } from '../../context/AuthContext';
 
-export class SettingsScreen extends React.Component<SettingsScreenProps> {
-  signOutAsync = async () => {
-    const { navigation } = this.props;
-    await AsyncStorage.removeItem('token');
-    navigation.navigate(Routes.Auth);
-  };
-  render() {
-    return (
-      <>
-        <Button title="Sign out" onPress={this.signOutAsync} />
-      </>
-    );
-  }
-}
+export const SettingsScreen: NavigationScreenComponent = (): JSX.Element => {
+  const { signout } = useContext(AuthContext);
+  return <Button title="Sign out" onPress={signout} />;
+};

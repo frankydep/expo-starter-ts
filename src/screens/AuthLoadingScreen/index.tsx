@@ -1,38 +1,20 @@
-import React from 'react';
-import { View, ActivityIndicator, AsyncStorage } from 'react-native';
+import React, { useEffect, useContext } from 'react';
+import { View, ActivityIndicator } from 'react-native';
+import { NavigationScreenComponent } from 'react-navigation';
 
-import { Routes } from '../../navigation';
 import { styles } from './styles';
-import {
-  NavigationScreenProp,
-  NavigationState,
-  NavigationParams,
-} from 'react-navigation';
+import { Context as AuthContext } from '../../context/AuthContext';
 
-interface AuthLoadingScreenProps {
-  navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-}
+export const AuthLoadingScreen: NavigationScreenComponent = (): JSX.Element => {
+  const { checkSignin } = useContext(AuthContext);
 
-export class AuthLoadingScreen extends React.Component<AuthLoadingScreenProps> {
-  constructor(props: AuthLoadingScreenProps) {
-    super(props);
-    // setTimeout for auth testing purpose
-    setTimeout(() => {
-      this._bootStrapAsync();
-    }, 0);
-  }
+  useEffect(() => {
+    checkSignin();
+  }, []);
 
-  _bootStrapAsync = async () => {
-    const { navigation } = this.props;
-    const token = await AsyncStorage.getItem('token');
-    navigation.navigate(token ? Routes.App : Routes.Auth);
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-}
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator />
+    </View>
+  );
+};
